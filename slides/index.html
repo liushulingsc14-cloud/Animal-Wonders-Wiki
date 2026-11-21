@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>動物探險圖鑑：你不知道的動物超能力</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f0f7f4 0%, #e8f1f5 100%);
+      --card-bg: #ffffff;
+      --text-main: #2d3748;
+      --text-muted: #5a6a80;
+      --primary: #2b7a78;
+      --primary-light: #def2f1;
+      --accent-coral: #fe6d73;
+      --accent-amber: #f4a261;
+      --accent-green: #2a9d8f;
+      --border-color: #e2e8f0;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", "PingFang TC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    /* Main Presentation Frame */
+    .deck-container {
+      width: 100%;
+      max-width: 1020px;
+      height: 640px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      border: 2px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Header & Progress Bar */
+    .deck-header {
+      padding: 12px 24px;
+      background: #fafbfc;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-track {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .progress-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .progress-dot.active {
+      background: var(--primary);
+      transform: scale(1.3);
+    }
+
+    .page-counter {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-left: 10px;
+      min-width: 50px;
+      text-align: right;
+    }
+
+    /* Slide Content Area */
+    .slide-viewport {
+      flex: 1;
+      position: relative;
+      overflow-y: auto;
+      padding: 24px 32px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide {
+      display: none;
+      height: 100%;
+      flex-direction: column;
+      justify-content: space-between;
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Typography & Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: fit-content;
+      margin-bottom: 8px;
+    }
+
+    .badge-intro { background: #e0f2fe; color: #0369a1; }
+    .badge-octopus { background: #e0f7fa; color: #007791; }
+    .badge-otter { background: #e8f5e9; color: #2e7d32; }
+    .badge-hummingbird { background: #fef3c7; color: #b45309; }
+    .badge-axolotl { background: #ffe4e6; color: #be123c; }
+    .badge-chameleon { background: #dcfce7; color: #15803d; }
+    .badge-summary { background: #f3e8ff; color: #7e22ce; }
+
+    .slide-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #1a202c;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .slide-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Layout Containers */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .content-single {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .info-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+
+    .info-card:hover {
+      border-color: #cbd5e1;
+      background: #f1f5f9;
+    }
+
+    .info-card h4 {
+      font-size: 15px;
+      color: var(--primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-card p {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #334155;
+    }
+
+    .highlight-box {
+      background: #fffbeb;
+      border-left: 4px solid var(--accent-amber);
+      padding: 10px 14px;
+      border-radius: 0 10px 10px 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #92400e;
+      margin-top: 8px;
+    }
+
+    /* Interactive Quiz Box */
+    .quiz-container {
+      background: #ffffff;
+      border: 2px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .quiz-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quiz-option {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13.5px;
+      text-align: left;
+      cursor: pointer;
+      font-family: inherit;
+      color: #334155;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .quiz-option:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .quiz-option.correct {
+      background: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d !important;
+      font-weight: 700;
+    }
+
+    .quiz-option.wrong {
+      background: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      color: #b91c1c !important;
+    }
+
+    .quiz-feedback {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      display: none;
+      animation: fadeIn 0.25s ease-in;
+    }
+
+    .quiz-feedback.show-correct {
+      display: block;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .quiz-feedback.show-wrong {
+      display: block;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    .retry-btn {
+      margin-top: 8px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-block;
+    }
+
+    .retry-btn:hover {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    /* Graphic Canvas */
+    .illustration-box {
+      background: #f8fafc;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      min-height: 240px;
+    }
+
+    .illustration-box svg {
+      max-width: 100%;
+      height: auto;
+      max-height: 180px;
+    }
+
+    .caption {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 8px;
+    }
+
+    /* Citation Footer */
+    .slide-footer {
+      font-size: 11.5px;
+      color: #94a3b8;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slide-footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .slide-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Controls Bar */
+    .deck-controls {
+      padding: 12px 24px;
+      background: #fafbfc;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-prev {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      color: #334155;
+    }
+
+    .btn-prev:hover:not(:disabled) {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .btn-next {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-next:hover:not(:disabled) {
+      background: #205e5c;
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .nav-hints {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* Slide 12 Table Styling */
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .ref-table th, .ref-table td {
+      border: 1px solid #e2e8f0;
+      padding: 6px 10px;
+      text-align: left;
+    }
+
+    .ref-table th {
+      background: #f1f5f9;
+      color: #334155;
+      font-weight: 700;
+    }
+
+    .ref-table tr:hover {
+      background: #f8fafc;
+    }
+
+    /* Responsiveness */
+    @media (max-width: 768px) {
+      .deck-container {
+        height: auto;
+        min-height: 600px;
+      }
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+      .slide-viewport {
+        padding: 16px;
+      }
+      .slide-title {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- Top Progress Bar & Header -->
+    <header class="deck-header">
+      <div class="brand-title">
+        <span>🐾</span> 動物超能力探險圖鑑
+      </div>
+      <div class="progress-track" id="progressDots"></div>
+      <div class="page-counter" id="pageCounter">1 / 12</div>
+    </header>
+
+    <!-- Main Viewport for Slides -->
+    <main class="slide-viewport" id="viewport">
+
+      <!-- ==================== Slide 1: 封面與引言 ==================== -->
+      <section class="slide active" data-slide="1">
+        <div class="content-single" style="justify-content: center; align-items: center; text-align: center; height: 100%;">
+          <span class="badge badge-intro">🧭 探險隊集合 · 科普系列</span>
+          <h1 class="slide-title" style="font-size: 32px; margin: 12px 0;">動物超能力探險圖鑑</h1>
+          <p class="slide-subtitle" style="font-size: 16px; max-width: 600px;">
+            探索深海、林間與陸地，解密自然界那些看似不可思議、背後卻有扎實科學證據的動物「冷知識」超能力！
+          </p>
+
+          <div style="display: flex; gap: 14px; margin: 16px 0; flex-wrap: wrap; justify-content: center;">
+            <div style="padding: 10px 14px; background: #e0f7fa; border-radius: 12px; font-size: 13px; font-weight: 700; color: #007791;">🐙 海洋三心客</div>
+            <div style="padding: 10px 14px; background: #e8f5e9; border-radius: 12px; font-size: 13px; font-weight: 700; color: #2e7d32;">🦦 海面漂流者</div>
+            <div style="padding: 10px 14px; background: #fef3c7; border-radius: 12px; font-size: 13px; font-weight: 700; color: #b45309;">🐦 空中倒車王</div>
+            <div style="padding: 10px 14px; background: #ffe4e6; border-radius: 12px; font-size: 13px; font-weight: 700; color: #be123c;">🦎 水下金鋼狼</div>
+            <div style="padding: 10px 14px; background: #dcfce7; border-radius: 12px; font-size: 13px; font-weight: 700; color: #15803d;">🌈 光學魔術師</div>
+          </div>
+
+          <div class="highlight-box" style="max-width: 640px; text-align: left;">
+            <strong>💡 探險手冊導讀指南：</strong><br>
+            • 本簡報依據可追溯之權威學術期刊、研究機構與博物館科普文獻整理，並客觀呈現研究條件與探索限制。<br>
+            • 途中設有 <strong>5 道互動猜題</strong>，請嘗試先猜答案，再揭曉反直覺的科學真相！<br>
+            • <em>【範圍說明】本探險圖鑑涵蓋軟體動物、哺乳類、鳥類、兩棲類與爬蟲類，目前尚未收錄魚類冷知識。</em>
+          </div>
+        </div>
+        <footer class="slide-footer">
+          <span>動物界冷知識 LLM Wiki 專案成果 · 繁體中文教學簡報</span>
+          <span>按右下方按鈕或鍵盤 [→] 鍵開始探險</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 2: 章魚 (三心與分工) ==================== -->
+      <section class="slide" data-slide="2">
+        <div>
+          <span class="badge badge-octopus">🐙 軟體動物門 · 八腕目 (Octopoda)</span>
+          <h2 class="slide-title">海洋三心客：章魚為什麼需要三顆心臟？</h2>
+          <p class="slide-subtitle">從潮間帶到深海，章魚是如何維持體內全身氧氣循環的？</p>
+        </div>
+
+        <div class="content-grid">
+          <div>
+            <div class="info-card">
+              <h4>💓 嚴格的三心生理分工</h4>
+              <p>章魚體內一共裝了 3 顆心臟在分工合作：<br>
+              • <strong>2 顆鰓心 (Branchial Hearts)</strong>：分別在兩側鰓部基部，專門加壓把缺氧血推入鰓微血管吸收海水溶氧。<br>
+              • <strong>1 顆體心 (Systemic Heart)</strong>：坐落身體正中央，負責將充氧後的新鮮血液強力泵送至全身器官組織。</p>
+            </div>
+            <div class="info-card">
+              <h4>🔵 藍色血液與血藍蛋白</h4>
+              <p>章魚的血液不是紅色的，而是特殊的<strong>藍色</strong>！因為牠們不是用含鐵的血紅蛋白，而是用含銅的<strong>「血藍蛋白 (Hemocyanin)」</strong>攜氧。在低溫與低溶氧環境中能維持攜氧，但因血液循環阻力較大，因此需要兩側鰓心額外提供加壓推進。</p>
+            </div>
+          </div>
+
+          <div class="illustration-box">
+            <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+              <path d="M100 25 C60 25 50 65 60 95 C65 110 80 125 100 125 C120 125 135 110 140 95 C150 65 140 25 100 25 Z" fill="#67e8f9" opacity="0.85"/>
+              <ellipse cx="85" cy="55" rx="6" ry="8" fill="#0f172a"/>
+              <ellipse cx="115" cy="55" rx="6" ry="8" fill="#0f172a"/>
+              <!-- 3 Hearts -->
+              <circle cx="100" cy="85" r="14" fill="#fe6d73"/>
+              <text x="100" y="89" font-size="9" font-weight="bold" fill="#ffffff" text-anchor="middle">體心</text>
+              <circle cx="70" cy="95" r="10" fill="#38bdf8"/>
+              <text x="70" y="98" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">鰓心</text>
+              <circle cx="130" cy="95" r="10" fill="#38bdf8"/>
+              <text x="130" y="98" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">鰓心</text>
+              <!-- Arms hint -->
+              <path d="M70 120 Q50 140 40 135 M85 125 Q75 145 70 140 M115 125 Q125 145 130 140 M130 120 Q150 140 160 135" stroke="#0284c7" stroke-width="6" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div class="caption">章魚循環系統：中央 1 顆主要體心 + 兩側 2 顆輔助鰓心</div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>數據來源：<a href="https://www.smithsonianmag.com/science-nature/ten-wild-facts-about-octopuses-they-have-three-hearts-big-brains-and-blue-blood-7625828/" target="_blank">Smithsonian Magazine (Rachel Nuwer, 2013; 2024 更新)</a></span>
+          <span>第 2 / 12 頁</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 3: 章魚 (體心停搏與互動猜題) ==================== -->
+      <section class="slide" data-slide="3">
+        <div>
+          <span class="badge badge-octopus">🐙 探險互動猜題 · 生理與行為</span>
+          <h2 class="slide-title">海床漫步者：為什麼章魚更喜歡用「爬」的？</h2>
+          <p class="slide-subtitle">在大海中悠哉漫步，可能跟心臟的跳動機制息息相關？</p>
+        </div>
+
+        <div class="content-grid">
+          <div class="quiz-container" id="quiz1">
+            <div class="quiz-title">🎯 探險家隨堂猜題（點選看答案）：</div>
+            <p style="font-size: 14px; margin-bottom: 12px; font-weight: 600;">
+              當章魚全力使用漏斗噴水高速「游泳」逃跑時，牠體內的中央體心會發生什麼事？
+            </p>
+            <div class="quiz-options">
+              <button class="quiz-option" onclick="handleQuiz(1, 'A')">A. 狂跳三倍速，輸出極致馬力</button>
+              <button class="quiz-option" onclick="handleQuiz(1, 'B')">B. 竟然會「暫停跳動」！</button>
+              <button class="quiz-option" onclick="handleQuiz(1, 'C')">C. 暫時關機，輪流換兩顆鰓心供血</button>
+            </div>
+            <div class="quiz-feedback" id="quizFeedback1"></div>
+          </div>
+
+          <div>
+            <div class="info-card">
+              <h4>🛑 游泳時的心臟停搏現象</h4>
+              <p>Smithsonian Magazine 等科普資料指出，章魚游泳時可能出現<strong>中央「體心」暫時停止搏動</strong>的現象。這項特性被認為可能與游泳時的生理負擔有關，但詳細因果機制仍需要直接生理研究確認。</p>
+            </div>
+            <div class="info-card">
+              <h4>🚶 海床上悠哉漫步的習性</h4>
+              <p>由於噴水游泳可能非常消耗體能，章魚在日常生活中更常運用柔軟腕足在海床上<strong>攀爬漫步（Crawling）</strong>以節省體力；高速噴水游動通常保留於防衛、逃避掠食者或緊急突發情況。</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>數據來源：<a href="https://www.smithsonianmag.com/science-nature/ten-wild-facts-about-octopuses-they-have-three-hearts-big-brains-and-blue-blood-7625828/" target="_blank">Smithsonian Magazine (2013; 2024 更新)</a></span>
+          <span>第 3 / 12 頁</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 4: 海獺 (牽手迷思與互動猜題) ==================== -->
+      <section class="slide" data-slide="4">
+        <div>
+          <span class="badge badge-otter">🦦 哺乳綱 · 鼬科 (Enhydra lutris)</span>
+          <h2 class="slide-title">海上睡美人：海獺睡覺時真的會甜蜜牽手嗎？</h2>
+          <p class="slide-subtitle">社群迷因上的可愛手牽手，是野生大自然的真實常態嗎？</p>
+        </div>
+
+        <div class="content-grid">
+          <div class="quiz-container" id="quiz2">
+            <div class="quiz-title">🎯 探險家隨堂猜題（點選看答案）：</div>
+            <p style="font-size: 14px; margin-bottom: 12px; font-weight: 600;">
+              在真實的野外狂風巨浪中，野生海獺睡覺時真的會像網路照片一樣彼此手牽手嗎？
+            </p>
+            <div class="quiz-options">
+              <button class="quiz-option" onclick="handleQuiz(2, 'A')">A. 會，每一隻野生海獺睡覺必十指緊扣</button>
+              <button class="quiz-option" onclick="handleQuiz(2, 'B')">B. 這是極端罕見（vanishingly rare）的美麗網路迷思！</button>
+            </div>
+            <div class="quiz-feedback" id="quizFeedback2"></div>
+          </div>
+
+          <div>
+            <div class="info-card">
+              <h4>🔍 野外行為學的客觀調查</h4>
+              <p>著名海洋生物學家（如 Karl Kenyon 與 Jim Estes 等）累積數萬小時的權威海獺行為圖譜（Ethograms），<strong>從未將「牽手 (Paw-holding)」記錄為野生常態行為</strong>。第一線野外學者指出，野外刻意牽手「極端罕見（vanishingly rare）」。</p>
+            </div>
+            <div class="info-card">
+              <h4>🌐 網路迷因從何而來？</h4>
+              <p>這項迷思始於 2007～2011 年加拿大溫哥華水族館圈養海獺（Milo 與 Tanu）在無浪人工池中偶然握爪漂浮的爆紅影片。大眾因「擬人化確認偏誤」，常把野外海獺漂浮時身體偶然碰觸誤認成深情牽手。</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>數據來源：<a href="https://www.seaottersavvy.org/sea-otter-paw-holding-a-reality-check" target="_blank">Gena Bentall，Sea Otter Savvy，未註明發表年份</a></span>
+          <span>第 4 / 12 頁</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 5: 海獺 (水上竹筏與巨藻定錨) ==================== -->
+      <section class="slide" data-slide="5">
+        <div>
+          <span class="badge badge-otter">🦦 海洋生態學 · 定錨超能力</span>
+          <h2 class="slide-title">海中天然錨：不靠牽手，海獺如何安穩入眠？</h2>
+          <p class="slide-subtitle">面對波濤洶湧的洋流與潮汐，海獺真正的防漂流武器是「把自己打包」！</p>
+        </div>
+
+        <div class="content-grid">
+          <div>
+            <div class="info-card">
+              <h4>🛶 海面休息群 (Rafts) 與個體習性</h4>
+              <p>海獺在日常覓食或移動時多為單獨活動，但當牠們休息、睡眠或整理毛皮時，部分個體會在海面上聚集漂浮，形成海洋生物學上所稱的<strong>「竹筏群 (Rafts)」</strong>（規模從數隻到數百隻不等）。</p>
+            </div>
+            <div class="info-card">
+              <h4>🌿 巨藻纏繞防漂流 (Kelp Wrapping)</h4>
+              <p>面對沿岸風浪與潮汐洋流，在生長有巨藻的棲地中，部分海獺會展現靈巧的防漂流行為：<br>
+              • 在海面巨藻林（Giant Kelp）中旋轉身體，讓長長的藻葉<strong>纏繞在腹部或身上</strong>。<br>
+              • 巨藻底部的「固著器（Holdfast）」牢固抓附海底岩礁，使海藻發揮天然防漂錨繩的效果，有助於降低海獺在入睡時被海流沖走的風險。</p>
+            </div>
+          </div>
+
+          <div class="illustration-box">
+            <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Water layers -->
+              <rect x="0" y="50" width="200" height="100" fill="#bae6fd" opacity="0.5"/>
+              <path d="M0 50 Q 50 45, 100 50 T 200 50 L 200 150 L 0 150 Z" fill="#7dd3fc" opacity="0.4"/>
+              <!-- Kelp stems -->
+              <path d="M40 150 Q55 100 80 55 Q95 40 120 45" stroke="#15803d" stroke-width="5" fill="none"/>
+              <path d="M70 150 Q60 90 95 60 Q110 50 140 52" stroke="#16a34a" stroke-width="4" fill="none"/>
+              <!-- Sea Otter Body floating on back -->
+              <ellipse cx="105" cy="46" rx="35" ry="14" fill="#a16207"/>
+              <circle cx="138" cy="42" r="10" fill="#ca8a04"/>
+              <!-- Otter Face -->
+              <circle cx="142" cy="40" r="1.5" fill="#1e293b"/>
+              <circle cx="145" cy="43" r="2" fill="#0f172a"/>
+              <!-- Kelp wrapped around waist -->
+              <path d="M90 40 Q105 55 120 42" stroke="#15803d" stroke-width="6" fill="none" stroke-linecap="round"/>
+              <path d="M85 45 Q100 60 115 47" stroke="#22c55e" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div class="caption">巨藻防漂：在巨藻林棲地中，部分海獺會藉由翻滾纏繞藻葉，減少在睡夢中被洋流沖走的風險</div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>數據來源：<a href="https://www.seaottersavvy.org/sea-otter-paw-holding-a-reality-check" target="_blank">Gena Bentall，Sea Otter Savvy，未註明發表年份</a></span>
+          <span>第 5 / 12 頁</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 6: 蜂鳥 (倒退飛行運動學) ==================== -->
+      <section class="slide" data-slide="6">
+        <div>
+          <span class="badge badge-hummingbird">🐦 鳥綱 · 蜂鳥科 (Calypte anna)</span>
+          <h2 class="slide-title">空中倒車大師：蜂鳥為什麼能倒退飛行？</h2>
+          <p class="slide-subtitle">在繁花叢中採蜜，精湛的「倒車出庫」特技是如何練成的？</p>
+        </div>
+
+        <div class="content-grid">
+          <div>
+            <div class="info-card">
+              <h4>🎯 澄清鳥類倒飛的定義</h4>
+              <p>坊間常稱「蜂鳥是唯一能倒飛的脊椎動物」，這過度絕對化了！其他鳥類（如鷺科或鶯科在禦敵受脅時）也能短暫向後倒退撲翼；蜂鳥的真正超能力是鳥類中少數能做到<strong>「受控且持續 (sustained) 的倒退飛行與精準懸停」</strong>，並將其當作日常採蜜工具。</p>
+            </div>
+            <div class="info-card">
+              <h4>📐 安氏蜂鳥倒飛姿態調節（運動學：研究物體如何移動）</h4>
+              <p>研究團隊利用風洞與高速攝影，分析<strong>安氏蜂鳥 (*Calypte anna*)</strong> 發現：<br>
+              • <strong>陡峭直立軀幹 (Upright Body)</strong>：倒飛時身體呈現更垂直的傾斜姿態。<br>
+              • <strong>顯著頭部屈曲補償 (Head Flexion)</strong>：身體雖然向後直立，頭部卻大幅度向前下方彎曲，使長喙與視線死死鎖定前方花朵！<br>
+              • <strong>振翅頻率上升</strong>：倒飛平均拍翅頻率約 <strong>43.8 Hz</strong>（前飛約 39.7 Hz）。</p>
+            </div>
+          </div>
+
+          <div class="illustration-box">
+            <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Flower on left -->
+              <path d="M20 120 Q30 70 40 60" stroke="#16a34a" stroke-width="4" fill="none"/>
+              <path d="M40 60 C30 50 35 35 48 45 C60 35 65 50 55 60 Z" fill="#f43f5e"/>
+              <!-- Hummingbird flying backward to the right -->
+              <!-- Body tilted upright -->
+              <ellipse cx="125" cy="70" rx="15" ry="24" fill="#059669" transform="rotate(-25 125 70)"/>
+              <!-- Head flexed downward toward flower -->
+              <circle cx="108" cy="55" r="10" fill="#10b981"/>
+              <!-- Long bill pointing to flower -->
+              <line x1="102" y1="58" x2="65" y2="52" stroke="#1f2937" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- Wings blurred -->
+              <ellipse cx="140" cy="55" rx="28" ry="7" fill="#6ee7b7" opacity="0.6" transform="rotate(35 140 55)"/>
+              <ellipse cx="135" cy="50" rx="26" ry="6" fill="#34d399" opacity="0.7" transform="rotate(20 135 50)"/>
+              <!-- Backward flight arrow -->
+              <path d="M120 115 L155 115 M148 110 L156 115 L148 120" stroke="#f59e0b" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <text x="135" y="132" font-size="10" font-weight="bold" fill="#d97706" text-anchor="middle">後退飛行方向</text>
+            </svg>
+            <div class="caption">安氏蜂鳥倒飛：身體直立後傾、頭部強烈前彎鎖定前方花朵</div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>數據來源：<a href="https://doi.org/10.1242/jeb.073114" target="_blank">Journal of Experimental Biology (Sapir & Dudley, 2012, PMID: 23014570)</a></span>
+          <span>第 6 / 12 頁</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 7: 蜂鳥 (風洞能耗與互動猜題) ==================== -->
+      <section class="slide" data-slide="7">
+        <div>
+          <span class="badge badge-hummingbird">🐦 探險互動猜題 · 能量代謝驚喜</span>
+          <h2 class="slide-title">風洞實驗驚奇：倒著飛的代謝耗能居然低於懸停？</h2>
+          <p class="slide-subtitle">在特定風洞空速條件下，倒飛的耗氧量竟然打破了直覺預期！</p>
+        </div>
+
+        <div class="content-grid">
+          <div class="quiz-container" id="quiz3">
+            <div class="quiz-title">🎯 探險家隨堂猜題（點選看答案）：</div>
+            <p style="font-size: 14px; margin-bottom: 12px; font-weight: 600;">
+              在加州大學柏克萊分校的風洞實驗中，安氏蜂鳥「倒著飛」與「在原地懸停」相比，體力消耗如何？
+            </p>
+            <div class="quiz-options">
+              <button class="quiz-option" onclick="handleQuiz(3, 'A')">A. 倒飛迎風阻力暴增，耗能比懸停高 50%</button>
+              <button class="quiz-option" onclick="handleQuiz(3, 'B')">B. 倒飛的代謝耗氧量，竟然比原地懸停低了約 20%！</button>
+              <button class="quiz-option" onclick="handleQuiz(3, 'C')">C. 兩者耗能完全一模一樣，沒有任何差別</button>
+            </div>
+            <div class="quiz-feedback" id="quizFeedback3"></div>
+          </div>
+
+          <div>
+            <div class="info-card">
+              <h4>💨 風洞呼吸面罩實驗的驚人發現</h4>
+              <p>研究團隊利用微型呼吸面罩，測量安氏蜂鳥的耗氧率（衡量身體能量代謝與呼吸耗能的指標）：<br>
+              在特定風洞實驗條件下，<strong>倒飛的耗氧量比原地懸停顯著降低了約 20%</strong>，且與同空速的前飛耗能相近！蜂鳥在原地懸停時必須持續拍動翅膀產生支撐體重的全部氣動力，極為耗能；而倒飛時的能量變化涉及身體姿勢與氣動力學等多重因素，研究尚未確立單一因果機制。此實驗打破了倒飛必然更費力的直覺假設，但不可任意推論為自然界所有情境倒飛都普遍更省力。</p>
+            </div>
+            <div class="highlight-box">
+              <strong>⚠️ 嚴謹科學邊界提醒：</strong><br>
+              此項「約 20% 能耗差值」明確來自研究團隊針對<strong>「安氏蜂鳥 (Calypte anna) 在特定風洞實驗條件下」</strong>的測量結果，不得直接外推至所有蜂鳥種類或自然界所有風況。
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>數據來源：<a href="https://doi.org/10.1242/jeb.073114" target="_blank">Journal of Experimental Biology (Sapir & Dudley, 2012)</a></span>
+          <span>第 7 / 12 頁</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 8: 墨西哥鈍口螈 (肢體與多器官再生) ==================== -->
+      <section class="slide" data-slide="8">
+        <div>
+          <span class="badge badge-axolotl">🦎 兩棲綱 · 有尾目 (Ambystoma mexicanum)</span>
+          <h2 class="slide-title">水下金鋼狼：驚人的多組織與器官再生能力！</h2>
+          <p class="slide-subtitle">如果失去手臂，墨西哥鈍口螈能長出怎樣的新肢體？</p>
+        </div>
+
+        <div class="content-grid">
+          <div>
+            <div class="info-card">
+              <h4>🧬 高度組織再生：骨骼、肌肉與神經</h4>
+              <p>墨西哥鈍口螈（俗稱六角恐龍，野外原產於墨西哥霍奇米爾科湖，屬極危物種）：<br>
+              • 若四肢受損或截肢，牠能重新生長出包含<strong>骨骼 (Bones)、肌肉 (Muscles)、神經 (Nerves) 與皮膚</strong>的肢體結構。<br>
+              • 新生組織能恢復相應運動機能，展現脊椎動物中極其罕見的高組織再生力。</p>
+            </div>
+            <div class="info-card">
+              <h4>✨ 卓越的多器官修復潛能</h4>
+              <p>除四肢之外，研究證實牠們的<strong>尾巴、脊髓 (Spinal cord)、部分心臟組織甚至眼睛</strong>受損時，亦具備令人矚目的組織修復與再生潛能！（註：哺乳動物纖維化疤痕阻礙機制屬病理學延伸假說，目前來源尚未直接檢測）。</p>
+            </div>
+          </div>
+
+          <div class="illustration-box">
+            <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- Water bg -->
+              <rect x="0" y="0" width="200" height="150" fill="#fff1f2" rx="12"/>
+              <!-- Axolotl head and body -->
+              <ellipse cx="100" cy="75" rx="38" ry="25" fill="#fda4af"/>
+              <!-- Smiling mouth & eyes -->
+              <circle cx="85" cy="70" r="3" fill="#881337"/>
+              <circle cx="115" cy="70" r="3" fill="#881337"/>
+              <path d="M92 82 Q100 88 108 82" stroke="#881337" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <!-- Feathery gills (3 on each side) -->
+              <path d="M65 65 Q45 50 35 60 M65 75 Q40 75 30 80 M65 85 Q45 100 38 95" stroke="#fb7185" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M135 65 Q155 50 165 60 M135 75 Q160 75 170 80 M135 85 Q155 100 162 95" stroke="#fb7185" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <!-- Regenerating glowing arm badge -->
+              <circle cx="145" cy="110" r="16" fill="#f43f5e" opacity="0.9"/>
+              <text x="145" y="114" font-size="9" font-weight="bold" fill="#ffffff" text-anchor="middle">再生肢</text>
+            </svg>
+            <div class="caption">墨西哥鈍口螈：外鰓如羽毛，擁有脊椎動物中極其罕見的高組織再生能力</div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>數據來源：<a href="https://www.mpg.de/11886639/decoding-the-axolotl-genome" target="_blank">Max Planck Society (2018)</a> / <a href="https://doi.org/10.1038/nature25458" target="_blank">Nature (Nowoshilow et al., 2018)</a></span>
+          <span>第 8 / 12 頁</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 9: 墨西哥鈍口螈 (基因組與互動猜題) ==================== -->
+      <section class="slide" data-slide="9">
+        <div>
+          <span class="badge badge-axolotl">🦎 探險互動猜題 · 基因密碼之謎</span>
+          <h2 class="slide-title">怪獸級基因組：人類十倍大！定序完成就破解了嗎？</h2>
+          <p class="slide-subtitle">為了探索再生秘密，跨國科學團隊如何解開這個驚人基因庫？</p>
+        </div>
+
+        <div class="content-grid">
+          <div class="quiz-container" id="quiz4">
+            <div class="quiz-title">🎯 探險家隨堂猜題（點選看答案）：</div>
+            <p style="font-size: 14px; margin-bottom: 12px; font-weight: 600;">
+              德國馬克斯普朗克學會等跨國團隊成功定序出鈍口螈的基因組，大約是人類基因組的幾倍大？
+            </p>
+            <div class="quiz-options">
+              <button class="quiz-option" onclick="handleQuiz(4, 'A')">A. 只有人類的一半大，構造很精簡</button>
+              <button class="quiz-option" onclick="handleQuiz(4, 'B')">B. 跟人類差不多大（約 30 億鹼基對）</button>
+              <button class="quiz-option" onclick="handleQuiz(4, 'C')">C. 整整是人類的 10 倍大（約 320 億鹼基對）！</button>
+            </div>
+            <div class="quiz-feedback" id="quizFeedback4"></div>
+          </div>
+
+          <div>
+            <div class="info-card">
+              <h4>📜 突破 32 Gb：重複片段的技術挑戰</h4>
+              <p>鈍口螈基因組長達 <strong>約 320 億鹼基對（32 Gb，約人類基因庫的 10 倍大）</strong>！其中超過 60% 都是高度重複序列，科學家結合先進的長讀取定序技術與專門開發的「MARVEL」電腦演算法組裝軟體，才成功拼接出這份巨型生命藍圖。</p>
+            </div>
+            <div class="info-card">
+              <h4>⚖️ 發育基因代償與嚴謹科學界線</h4>
+              <p>• <strong>發育調控基因的代償作用</strong>：研究發現與胚胎組織發育調控有關的核心基因 <em>Pax3</em> 在鈍口螈體內缺失，而同源基因 <em>Pax7</em>（同屬調控胚胎發育的基因家族）發揮了重要代償作用（論文指出其承擔關鍵調控，但未定論已完整取代 Pax3 的全部功能）。<br>
+              • <strong>【重要觀念澄清】</strong>：基因組定序是為全世界提供探索再生的<strong>「必備分子藍圖與工具」</strong>，絕不等於「人類已完全解開了斷肢再生的全部機制」！</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>數據來源：<a href="https://doi.org/10.1038/nature25458" target="_blank">Nature (Nowoshilow et al., 2018)</a> / Max-Planck-Gesellschaft</span>
+          <span>第 9 / 12 頁</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 10: 變色龍 (光子晶體物理機制) ==================== -->
+      <section class="slide" data-slide="10">
+        <div>
+          <span class="badge badge-chameleon">🌈 爬蟲綱 · 有鱗目 (Furcifer pardalis)</span>
+          <h2 class="slide-title">光學魔法師：皮膚下的微型「光子晶體」！</h2>
+          <p class="slide-subtitle">變色龍數分鐘內迅速切換斑斕色彩，是靠擠壓色素顆粒嗎？</p>
+        </div>
+
+        <div class="content-grid">
+          <div>
+            <div class="info-card">
+              <h4>💎 結構色與色素細胞的共同作用</h4>
+              <p>《自然通訊》研究證實：鮮豔體色轉變並非單一晶體的作用，而是<strong>「表層虹彩細胞」鳥嘌呤晶體反射之結構色（由微細結構與光線交互作用形成的顏色）</strong>與<strong>上層黃色/紅色色素細胞</strong>相互疊加的綜合結果！例如結構反射藍光穿透黃色素形成翠綠色；在紅色皮膚區塊，則富含成熟紅色素細胞，由晶體改變反射光譜與色素共同調節色澤，並非所有紅色都由晶體單獨反射產生。</p>
+            </div>
+            <div class="info-card">
+              <h4>📐 晶格間距量化基準（嚴格對應原文）</h4>
+              <p>論文實驗量化指出：<strong>平靜放鬆時的晶體間距，平均比興奮狀態小約 30%</strong>！<br>
+              • <strong>平靜放鬆</strong>：晶體排列較緊密，反射光譜偏向短波長藍光，經上方黃色素細胞疊加呈現<strong>翠綠色</strong>（自然偽裝色）。<br>
+              • <strong>社交興奮</strong>：晶體間距增大，反射光譜產生「紅移（反射光偏向較長波長）」，反射黃/橙/紅光並與色素細胞共同作用，在數分鐘內展現醒目色彩！</p>
+            </div>
+            <div class="highlight-box">
+              <strong>🦎 物種限定說明：</strong><br>
+              本研究嚴格基於馬達加斯加產<strong>「豹變色龍 (*Furcifer pardalis*)」</strong>。全體變色龍科有約 200 種，許多地棲枯葉變色龍幾無鮮豔變色力，不可外推至所有變色龍。
+            </div>
+          </div>
+
+          <div class="illustration-box">
+            <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+              <rect x="15" y="20" width="80" height="90" rx="8" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+              <text x="55" y="35" font-size="9" font-weight="bold" fill="#047857" text-anchor="middle">平靜放鬆狀態</text>
+              <!-- tightly packed dots -->
+              <circle cx="35" cy="55" r="3.5" fill="#0284c7"/><circle cx="55" cy="55" r="3.5" fill="#0284c7"/><circle cx="75" cy="55" r="3.5" fill="#0284c7"/>
+              <circle cx="45" cy="70" r="3.5" fill="#0284c7"/><circle cx="65" cy="70" r="3.5" fill="#0284c7"/>
+              <circle cx="35" cy="85" r="3.5" fill="#0284c7"/><circle cx="55" cy="85" r="3.5" fill="#0284c7"/><circle cx="75" cy="85" r="3.5" fill="#0284c7"/>
+              <text x="55" y="103" font-size="8" fill="#0369a1" text-anchor="middle">平靜小約30% ➜ 綠光</text>
+
+              <rect x="105" y="20" width="80" height="90" rx="8" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+              <text x="145" y="35" font-size="9" font-weight="bold" fill="#c2410c" text-anchor="middle">社交興奮狀態</text>
+              <!-- widely spaced dots -->
+              <circle cx="120" cy="50" r="3.5" fill="#ef4444"/><circle cx="170" cy="50" r="3.5" fill="#ef4444"/>
+              <circle cx="145" cy="70" r="3.5" fill="#ef4444"/>
+              <circle cx="120" cy="90" r="3.5" fill="#ef4444"/><circle cx="170" cy="90" r="3.5" fill="#ef4444"/>
+              <text x="145" y="103" font-size="8" fill="#b91c1c" text-anchor="middle">晶距增大 ➜ 黃/橙/紅光</text>
+            </svg>
+            <div class="caption">表層虹彩細胞：鳥嘌呤奈米晶格間距調節反射光譜，與色素細胞共同疊加產生豐富色彩</div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>數據來源：<a href="https://doi.org/10.1038/ncomms7368" target="_blank">Nature Communications (Teyssier et al., 2015, PMID: 25757068)</a></span>
+          <span>第 10 / 12 頁</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 11: 變色龍 (社交與熱防護及互動猜題) ==================== -->
+      <section class="slide" data-slide="11">
+        <div>
+          <span class="badge badge-chameleon">🌈 探險互動猜題 · 功能演化之謎</span>
+          <h2 class="slide-title">換上鮮豔戰袍！變色真的只是為了偽裝嗎？</h2>
+          <p class="slide-subtitle">在大自然演化中，鮮豔外衣究竟為變色龍解決了什麼難題？</p>
+        </div>
+
+        <div class="content-grid">
+          <div class="quiz-container" id="quiz5">
+            <div class="quiz-title">🎯 探險家隨堂猜題（點選看答案）：</div>
+            <p style="font-size: 14px; margin-bottom: 12px; font-weight: 600;">
+              雄性豹變色龍突然從平靜的綠色，迅速切換成極度鮮豔醒目的黃色、橙色或紅色，最主要的情境是什麼？
+            </p>
+            <div class="quiz-options">
+              <button class="quiz-option" onclick="handleQuiz(5, 'A')">A. 遇到猛禽天敵，想要偽裝躲藏</button>
+              <button class="quiz-option" onclick="handleQuiz(5, 'B')">B. 遇到情敵展開領地爭鬥，或是向雌性求偶炫耀！</button>
+              <button class="quiz-option" onclick="handleQuiz(5, 'C')">C. 肚子太餓，藉由紅光吸引飛蟲靠近</button>
+            </div>
+            <div class="quiz-feedback" id="quizFeedback5"></div>
+          </div>
+
+          <div>
+            <div class="info-card">
+              <h4>📢 社交溝通與偽裝的生存權衡（Trade-off：不同功能之間的取捨）</h4>
+              <p>• <strong>社交戰袍大秀</strong>：主動顯著變色最常發生於同性爭鬥威嚇與求偶。<br>
+              • <strong>迷思澄清：「不只是偽裝」≠「完全不具偽裝」</strong>！放鬆時的綠色底色是融入枝葉的極佳偽裝；雙層虹彩細胞解決了「隱蔽偽裝」與「高對比社交」之間的生存權衡（Trade-off，即不同功能需求之間的取捨平衡）。</p>
+            </div>
+            <div class="info-card">
+              <h4>🛡️ 深層細胞反射近紅外線 (D-iridophores)</h4>
+              <p>研究觀察到真皮深層能反射陽光中的近紅外線（人眼看不見、波長比紅光更長的光線熱輻射，波長大於 700 奈米）。論文指出這項物理光學反射<strong>「可能提供被動熱防護」</strong>，減少吸收熱量；但論文強調這項活體體溫調節效果仍屬推論假說，尚未經活體生理實驗量化證實。</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>數據來源：<a href="https://doi.org/10.1038/ncomms7368" target="_blank">Nature Communications (Teyssier et al., 2015)</a></span>
+          <span>第 11 / 12 頁</span>
+        </footer>
+      </section>
+
+      <!-- ==================== Slide 12: 結業統整與文獻榮譽榜 ==================== -->
+      <section class="slide" data-slide="12">
+        <div>
+          <span class="badge badge-summary">🎓 探險結業 · 榮譽榜與文獻</span>
+          <h2 class="slide-title">探險結業：動物超能力榮譽榜與科學文獻清單</h2>
+          <p class="slide-subtitle">恭喜完成 5 大物種超能力探索！本篇整理自各物種代表性研究，兼顧科學證據與探索限制。</p>
+        </div>
+
+        <div class="content-single" style="gap: 10px;">
+          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
+            <div style="background: #e0f7fa; padding: 8px; border-radius: 8px; font-size: 11.5px; border-left: 3px solid #007791;">
+              <strong>🐙 章魚</strong><br>三心分工，劇烈游泳體心暫停，偏好海床漫步。
+            </div>
+            <div style="background: #e8f5e9; padding: 8px; border-radius: 8px; font-size: 11.5px; border-left: 3px solid #2e7d32;">
+              <strong>🦦 海獺</strong><br>牽手是野外極罕見迷思，水上竹筏與巨藻定錨防漂。
+            </div>
+            <div style="background: #fef3c7; padding: 8px; border-radius: 8px; font-size: 11.5px; border-left: 3px solid #b45309;">
+              <strong>🐦 蜂鳥</strong><br>安氏蜂鳥受控持續倒飛，風洞實驗倒飛耗氧低約20%。
+            </div>
+            <div style="background: #ffe4e6; padding: 8px; border-radius: 8px; font-size: 11.5px; border-left: 3px solid #be123c;">
+              <strong>🦎 鈍口螈</strong><br>肢體與多器官再生，32 Gb 巨大基因圖譜（Pax7代償調控）。
+            </div>
+            <div style="background: #dcfce7; padding: 8px; border-radius: 8px; font-size: 11.5px; border-left: 3px solid #15803d;">
+              <strong>🌈 變色龍</strong><br>豹變色龍鳥嘌呤奈米晶格調控結構色，社交與偽裝並存。
+            </div>
+          </div>
+
+          <table class="ref-table">
+            <thead>
+              <tr>
+                <th>物種 / 主題</th>
+                <th>研究機構 / 出版期刊</th>
+                <th>發表論文標題</th>
+                <th>文獻識別碼 / 官方網址</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>章魚 (八腕目)</td>
+                <td>Smithsonian Magazine</td>
+                <td>Ten Wild Facts About Octopuses</td>
+                <td><a href="https://www.smithsonianmag.com/science-nature/ten-wild-facts-about-octopuses-they-have-three-hearts-big-brains-and-blue-blood-7625828/" target="_blank">Smithsonian 2013 (2024更新)</a></td>
+              </tr>
+              <tr>
+                <td>海獺 (鼬科)</td>
+                <td>Sea Otter Savvy / USFWS / CDFW</td>
+                <td>Sea Otter Paw Holding: A Reality Check</td>
+                <td><a href="https://www.seaottersavvy.org/sea-otter-paw-holding-a-reality-check" target="_blank">Gena Bentall，Sea Otter Savvy，未註明發表年份</a></td>
+              </tr>
+              <tr>
+                <td>安氏蜂鳥 (蜂鳥科)</td>
+                <td>Journal of Experimental Biology</td>
+                <td>Backward flight in hummingbirds employs unique kinematic adjustments...</td>
+                <td><a href="https://doi.org/10.1242/jeb.073114" target="_blank">DOI: 10.1242/jeb.073114</a> (PMID: 23014570)</td>
+              </tr>
+              <tr>
+                <td>墨西哥鈍口螈 (兩棲綱)</td>
+                <td>Nature & Max Planck Society</td>
+                <td>The axolotl genome and the evolution of key tissue formation regulators</td>
+                <td><a href="https://doi.org/10.1038/nature25458" target="_blank">DOI: 10.1038/nature25458</a> / <a href="https://www.mpg.de/11886639/decoding-the-axolotl-genome" target="_blank">MPG News</a></td>
+              </tr>
+              <tr>
+                <td>豹變色龍 (爬蟲綱)</td>
+                <td>Nature Communications</td>
+                <td>Photonic crystals cause active colour change in chameleons</td>
+                <td><a href="https://doi.org/10.1038/ncomms7368" target="_blank">DOI: 10.1038/ncomms7368</a> (PMID: 25757068)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">
+            <em>📌 知識庫邊界限制說明：本探險圖鑑已完整收錄軟體動物、哺乳類、鳥類、兩棲類與爬蟲類，<strong>目前尚未收錄魚類冷知識</strong>，堅守不自行編造未檢索來源之科學原則。</em>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>恭喜完成探索！感謝瑞士日內瓦大學、柏克萊分校、馬克斯普朗克學會等全球頂尖科研團隊提供知識基石</span>
+          <span>第 12 / 12 頁 · 探險圓滿完成</span>
+        </footer>
+      </section>
+
+    </main>
+
+    <!-- Bottom Controls -->
+    <footer class="deck-controls">
+      <button class="btn btn-prev" id="prevBtn" onclick="changeSlide(-1)" disabled>
+        ← 上一頁
+      </button>
+      <div class="nav-hints">
+        支援鍵盤 [←] [→] 方向鍵切換
+      </div>
+      <button class="btn btn-next" id="nextBtn" onclick="changeSlide(1)">
+        下一頁 →
+      </button>
+    </footer>
+  </div>
+
+  <script>
+    // State management
+    let currentSlide = 1;
+    const totalSlides = 12;
+
+    // Elements
+    const slides = document.querySelectorAll('.slide');
+    const pageCounter = document.getElementById('pageCounter');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressDotsContainer = document.getElementById('progressDots');
+
+    // Initialize Progress Dots
+    function initProgressDots() {
+      progressDotsContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = `progress-dot ${i === 1 ? 'active' : ''}`;
+        dot.title = `切換至第 ${i} 頁`;
+        dot.onclick = () => goToSlide(i);
+        progressDotsContainer.appendChild(dot);
+      }
+    }
+
+    // Go to specific slide
+    function goToSlide(n) {
+      if (n < 1 || n > totalSlides) return;
+      currentSlide = n;
+      updateUI();
+    }
+
+    // Change slide relative
+    function changeSlide(direction) {
+      goToSlide(currentSlide + direction);
+    }
+
+    // Update UI elements
+    function updateUI() {
+      // Toggle slides
+      slides.forEach((slide) => {
+        const slideIndex = parseInt(slide.getAttribute('data-slide'), 10);
+        if (slideIndex === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      // Update counter
+      pageCounter.textContent = `${currentSlide} / ${totalSlides}`;
+
+      // Update navigation buttons
+      prevBtn.disabled = (currentSlide === 1);
+      nextBtn.disabled = (currentSlide === totalSlides);
+      if (currentSlide === totalSlides) {
+        nextBtn.textContent = '探險結束 🎓';
+      } else {
+        nextBtn.textContent = '下一頁 →';
+      }
+
+      // Update dots
+      const dots = document.querySelectorAll('.progress-dot');
+      dots.forEach((dot, idx) => {
+        if (idx + 1 === currentSlide) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        changeSlide(1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        changeSlide(-1);
+      }
+    });
+
+    // Quiz logic & answers database
+    const quizData = {
+      1: {
+        correct: 'B',
+        rationale: '答對了！Smithsonian Magazine 等科普資料指出，章魚游泳時可能出現體心暫時停止搏動的現象。這項特性被認為可能與游泳時的生理負擔有關，但詳細因果機制仍需要直接生理研究確認。'
+      },
+      2: {
+        correct: 'B',
+        rationale: '答對了！第一線野外學者指出，野外海獺牽手睡覺「極端罕見（vanishingly rare）」，行為圖譜亦無常態記載。這個迷因源自水族館圈養海獺的爆紅影片；在野外，生長有巨藻棲地的海獺主要會利用巨藻包覆身體來防止被洋流沖走！'
+      },
+      3: {
+        correct: 'B',
+        rationale: '答對了！在特定風洞實驗條件下，安氏蜂鳥倒飛代謝耗氧量比懸停低約 20%！蜂鳥在原地懸停時必須持續拍動翅膀產生支撐體重的全部氣動力，極為耗能；而倒飛時的能量變化涉及身體姿勢與氣動力學等多重因素，研究尚未確立單一因果機制。此為特定風洞實驗數據，不可任意推論至自然界所有情境！'
+      },
+      4: {
+        correct: 'C',
+        rationale: '答對了！墨西哥鈍口螈基因組長達約 320 億鹼基對（32 Gb），足足是人類的 10 倍之大！科學家結合 PacBio 與 MARVEL 演算法才成功克服重複序列難題。'
+      },
+      5: {
+        correct: 'B',
+        rationale: '答對了！雄性豹變色龍會在同性競爭或求偶時呈現鮮豔的黃、橙、紅等體色，作為重要的社交訊號。這些體色涉及皮膚結構色與色素細胞的共同作用。'
+      }
+    };
+
+    function handleQuiz(quizId, selectedOption) {
+      const container = document.getElementById(`quiz${quizId}`);
+      const feedback = document.getElementById(`quizFeedback${quizId}`);
+      const buttons = container.querySelectorAll('.quiz-option');
+      const correctAns = quizData[quizId].correct;
+
+      // Disable buttons
+      buttons.forEach(btn => btn.style.pointerEvents = 'none');
+
+      // Highlight options
+      buttons.forEach(btn => {
+        if (btn.textContent.trim().startsWith(correctAns)) {
+          btn.classList.add('correct');
+        } else if (btn.textContent.trim().startsWith(selectedOption)) {
+          btn.classList.add('wrong');
+        }
+      });
+
+      // Show feedback
+      if (selectedOption === correctAns) {
+        feedback.className = 'quiz-feedback show-correct';
+        feedback.innerHTML = `<strong>🎉 太棒了，答對了！</strong><br>${quizData[quizId].rationale}<br><button class="retry-btn" onclick="resetQuiz(${quizId})">🔄 重新挑戰</button>`;
+      } else {
+        feedback.className = 'quiz-feedback show-wrong';
+        feedback.innerHTML = `<strong>💡 差一點點喔！正確答案是 ${correctAns}。</strong><br>${quizData[quizId].rationale}<br><button class="retry-btn" onclick="resetQuiz(${quizId})">🔄 重新挑戰</button>`;
+      }
+    }
+
+    function resetQuiz(quizId) {
+      const container = document.getElementById(`quiz${quizId}`);
+      const feedback = document.getElementById(`quizFeedback${quizId}`);
+      const buttons = container.querySelectorAll('.quiz-option');
+
+      buttons.forEach(btn => {
+        btn.style.pointerEvents = 'auto';
+        btn.classList.remove('correct', 'wrong');
+      });
+
+      feedback.className = 'quiz-feedback';
+      feedback.innerHTML = '';
+    }
+
+    // Run on mount
+    initProgressDots();
+    updateUI();
+  </script>
+</body>
+</html>

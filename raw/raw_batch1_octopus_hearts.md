@@ -6,7 +6,7 @@
 - **文獻/文章標題**：Ten Wild Facts About Octopuses: They Have Three Hearts, Big Brains and Blue Blood
 - **發布機構**：Smithsonian Magazine (史密森尼學會 / 史密森尼雜誌)
 - **作者**：Rachel Nuwer（更新編輯：Sonja Anderson）
-- **發布/更新日期**：2012-10-31（經科學新知持續更新）
+- **發布/更新日期**：原始發表 2013-10-31；更新日期 2024-03-13
 - **原始網址**：https://www.smithsonianmag.com/science-nature/ten-wild-facts-about-octopuses-they-have-three-hearts-big-brains-and-blue-blood-7625828/
 - **資料檢索與限制說明**：
   - 檢索日期：2026-11-21
